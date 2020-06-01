@@ -7,7 +7,8 @@ Author's annotation: Completes the graph module for linked directed graphs
 using an adjacency list, adding preconditions and raising exceptions where
 relevant.
 
-Note: Heavily modified to support various graphs and to suit PEP recommendation
+Note: Entirely modified to support various graphs and to suit PEP
+recommendations
 """
 from __future__ import annotations
 from abstractcollection import AbstractCollection
