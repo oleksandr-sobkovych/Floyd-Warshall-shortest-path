@@ -64,7 +64,7 @@ def input_color(prompt, fg=None, bg=None):
     return input()
 
 
-def get_weight_matrix():
+def get_weight_matrix(choice='2'):
     while True:
         try:
             vert_n = int(input("Enter the number of vertexes (int only): "))
@@ -74,16 +74,27 @@ def get_weight_matrix():
     matrix = []
     for i in range(vert_n):
         matrix.append([])
-        for j in range(vert_n):
+        if choice == '1':
             while True:
                 try:
-                    ij_weight = input(f"Enter the weight of ({i}, {j})"
-                                      f" element: ")
-                    matrix[-1].append(float(ij_weight))
+                    row_value = input(f"Enter the weights of {i}th row"
+                                      f" (using ' ' as a separator): ")
+                    matrix[-1] = [int(value) for value in row_value.split()]
                     break
                 except ValueError:
-                    print(
-                        "A weight must be int value, try again.")
+                    print("Check the correctness of input and try again")
+
+        else:
+            for j in range(vert_n):
+                while True:
+                    try:
+                        ij_weight = input(f"Enter the weight of ({i}, {j})"
+                                          f" element: ")
+                        matrix[-1].append(float(ij_weight))
+                        break
+                    except ValueError:
+                        print(
+                            "A weight must be int value, try again.")
     return matrix
 
 
@@ -174,7 +185,10 @@ def run_test():
 
 
 def main():
-    matrix = get_weight_matrix()
+    choice = input("If you want to initialize the graph, using weight matrix,"
+                   " enter 1.\nIf you want to initialize by"
+                   " typing each weight of edge, enter 2: ")
+    matrix = get_weight_matrix(choice)
     dg = initialize_graph(matrix)
     show_graph(dg)
     floyd(dg)
