@@ -43,7 +43,91 @@ def floyd(graph: LinkedGraph):
         print(matrix[i])
 
 
-if __name__ == '__main__':
+def print_color(*args, fg=None, bg=None, sep=" ", end="\n"):
+    """Print in color (fg - font, bg - background) in RGB."""
+    color_map = f"\33["
+    if fg:
+        color_map += f"38;2;{fg[0]};{fg[1]};{fg[2]};"
+    if bg:
+        color_map += f"48;2;{bg[0]};{bg[1]};{bg[2]};"
+    if not(bg or fg):
+        color_map += "0;"
+    color_map = color_map[:-1] + "m"
+    print(f"{color_map}", end="")
+    print(*args, sep=sep, end="")
+    print('\33[0m', end=end)
+
+
+def input_color(prompt, fg=None, bg=None):
+    """Input in color RGB."""
+    print_color(prompt, end="", fg=fg, bg=bg)
+    return input()
+
+
+def get_weight_matrix():
+    while True:
+        try:
+            vert_n = int(input("Enter the number of vertexes (int only): "))
+            break
+        except ValueError:
+            print("Number of vertexes must be int value, try again.")
+    matrix = []
+    for i in range(vert_n):
+        matrix.append([])
+        for j in range(vert_n):
+            while True:
+                try:
+                    ij_weight = input(f"Enter the weight of ({i}, {j})"
+                                      f" element: ")
+                    matrix[-1].append(float(ij_weight))
+                    break
+                except ValueError:
+                    print(
+                        "A weight must be int value, try again.")
+    return matrix
+
+
+def initialize_graph(weight_matrix):
+    g = LinkedGraph()
+    dg = LinkedDirectedGraph()
+    n = len(weight_matrix)
+
+    for i in range(n):
+        g.add_vertex(i)
+        dg.add_vertex(i)
+
+    for i in range(len(weight_matrix)):
+        for j in range(len(weight_matrix)):
+            if weight_matrix[i][j] > 0:
+                try:
+                    dg.add_edge(i, j, weight_matrix[i][j])
+                    g.add_edge(i, j, weight_matrix[i][j])
+                except AttributeError:
+                    continue
+
+    print(g)
+    print(dg)
+    return dg
+
+
+def show_graph(dir_graph):
+    dg = dir_graph
+    graph = nx.DiGraph()
+    for node in dg.vertices():
+        graph.add_node(node.get_label())
+    for edge in dg.edges():
+        vertices = edge.get_vertices()
+        graph.add_edge(vertices[0].get_label(), vertices[1].get_label(),
+                       weight=edge.get_weight())
+    pos = nx.spring_layout(graph)
+    edge_labels = dict([((u, v,), d['weight'])
+                        for u, v, d in graph.edges(data=True)])
+    nx.draw_networkx_edge_labels(graph, pos, edge_labels)
+    nx.draw(graph, pos, with_labels=True)
+    plt.show()
+
+
+def run_test():
     g = LinkedGraph()
     dg = LinkedDirectedGraph()
 
@@ -86,3 +170,15 @@ if __name__ == '__main__':
     plt.show()
 
     floyd(dg)
+    # print_color()
+
+
+def main():
+    matrix = get_weight_matrix()
+    dg = initialize_graph(matrix)
+    show_graph(dg)
+    floyd(dg)
+
+
+if __name__ == '__main__':
+    main()
